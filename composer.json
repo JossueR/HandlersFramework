@@ -1,0 +1,22 @@
+{
+    "name": "sysmyapp.com/handlers-framework",
+    "description": "Framework php ligero MVC",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "jossue",
+            "email": "jossue.rodriguez@gmail.com"
+        }
+    ],
+	"autoload": {
+        "psr-4": {
+            "Handlers\\": "src/Handlers"
+        }
+    },
+    "require": {
+        "ext-json": "*",
+        "ext-mysqli": "*",
+      "ext-simplexml": "*"
+    }
+}
