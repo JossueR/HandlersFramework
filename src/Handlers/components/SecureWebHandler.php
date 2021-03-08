@@ -5,6 +5,8 @@ namespace Handlers\components;
 
 
 use Exception;
+use Handlers\data_access\ConfigVarRepo;
+use Handlers\data_access\DynamicSecurityAccessRepo;
 use Handlers\data_access\LoggedUserRepo;
 
 class SecureWebHandler extends WebHandler
@@ -28,6 +30,10 @@ class SecureWebHandler extends WebHandler
             throw new Exception('no logeado');
         }else{
             //TODO si esta logeado, valida si requere permiso
+            ConfigVarRepo::getInstance()->clearAllVars();
+           if(! DynamicSecurityAccessRepo::getInstance()->checkHandlerActionAccess($this) ){
+               throw new Exception('requiere permiso');
+           }
         }
     }
 }

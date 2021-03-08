@@ -86,7 +86,7 @@ class SecAccessDAO extends AbstractBaseDAO
     }
 
 
-
+/*
 
     function &insert($searchArray){
         $defaul["create_date"] = self::$SQL_TAG."now()";
@@ -109,7 +109,7 @@ class SecAccessDAO extends AbstractBaseDAO
         $searchArray = array_merge($searchArray, $defaul);
         return parent::update($searchArray, $condicion);
     }
-
+*/
     function getByUser($user_id){
         $searchArray["t1.active"] = self::REG_ACTIVO_TX;
         $searchArray = self::putQuoteAndNull($searchArray, !self::REMOVE_TAG);

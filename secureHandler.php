@@ -5,10 +5,12 @@ namespace test_project;
 
 
 use Handlers\components\SecureWebHandler;
+use Handlers\data_access\DynamicSecurityAccessRepo;
 
 class secureHandler extends SecureWebHandler
 {
     function indexAction(){
+
         echo "ok sec";
         //self::destroySession();
         /*
