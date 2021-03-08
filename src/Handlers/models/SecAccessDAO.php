@@ -3,7 +3,7 @@
 
 namespace Handlers\models;
 
-
+use Handlers\data_access\AbstractBaseDAO;
 class SecAccessDAO extends AbstractBaseDAO
 {
     function __construct() {

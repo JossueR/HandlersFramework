@@ -4,9 +4,10 @@
 namespace Handlers\components;
 
 
+
+use Handlers\data_access\SimpleDAO;
 use Handlers\models\ConnectionFromDAO;
 use Handlers\models\PermissionsDAO;
-use Handlers\models\SimpleDAO;
 
 class SecureResponseHandler extends ResponseHandler
 {
@@ -43,7 +44,7 @@ class SecureResponseHandler extends ResponseHandler
 
     function getAccess(){
         $uname = $this->getRequestAttr("user");
-        $token = $this->getRequestAttr("token");
+        $token = $this->getRequestAttr(self::KEY_ACCESS_TOKEN);
 
         //$ip = null;
         $conn = new ConnectionFromDAO();
@@ -84,7 +85,7 @@ class SecureResponseHandler extends ResponseHandler
         $all = $premissiondao->loadPermissions($this->connection_data["user_id"]);
         DynamicSecurityAccess::loadPermissions($all);
 
-        loginHandler::loadConf();
+
     }
 
     private function  setUsername(){

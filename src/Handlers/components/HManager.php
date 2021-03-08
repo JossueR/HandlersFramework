@@ -6,7 +6,56 @@ namespace Handlers\components;
 
 class HManager
 {
+    /**
+     * Almacena las variables que seran enviadas a las vistas
+     */
+    private $_vars = array();
+    private static $LAST_UNIC;
     protected $errors = array();
+
+    public function existVar($key){
+        return isset($this->_vars[$key]);
+    }
+
+    /**
+     *
+     * Carga variable para ser accesada en las vistas
+     * @param String $key
+     * @param Mixed $value
+     */
+    public function setVar($key, $value){
+        $this->_vars[$key] = $value;
+    }
+
+    /**
+     *
+     * Obtiene variable registrada con setVar.
+     * retorna nulo si no existe
+     * @param Mixed $key
+     */
+    public function getVar($key){
+        return (isset($this->_vars[$key]))? $this->_vars[$key] : null;
+    }
+
+    public function clearVar($key){
+        if(isset($this->_vars[$key])){
+            unset($this->_vars[$key]);
+        }
+    }
+
+
+    public function getAllVars(){
+        return $this->_vars;
+    }
+
+    public function setALLVars($all){
+        $this->_vars = $all;
+    }
+
+    public function clearAllVars(){
+        unset($this->_vars);
+        $this->_vars = array();
+    }
 
     public function haveErrors(){
         return (count($this->errors) > 0);
@@ -76,41 +125,7 @@ class HManager
         return json_encode($json);
     }
 
-    /**
-     * Obtiene un texto a partir de la llave y reemplaza los valores los key en $data por su valor
-     * @param string $tagName
-     * @param array $data
-     * @return string
-     */
-    static function showMessage($tagName, $data= array()){
-        $pattern = "/\{([\w]+)\}/";
-        $tagName = strtolower($tagName);
-        if(isset($_SESSION['TAG'][$tagName])){
-            $tag = $_SESSION['TAG'][$tagName];
 
-            if(count($data) > 0)
-            {
-                preg_match_all($pattern, $tag, $matches, PREG_OFFSET_CAPTURE);
-
-                for($i=0; $i < count($matches[0]); $i++){
-                    $foundKey = $matches[1][$i][0];
-
-                    if(!isset($data[$foundKey]) || $data[$foundKey] === null){
-                        $replaceWith = "";
-                    }else{
-                        $replaceWith = $data[$foundKey];
-                    }
-
-                    $tag = str_replace("{".$foundKey."}", $replaceWith, $tag);
-                }
-            }
-            return $tag;
-
-        }else{
-            return "MISSING $tagName";
-        }
-
-    }
 
     /**
      * Obtiene un texto a partir de la llave y reemplaza los valores los key en $data por su valor
@@ -140,5 +155,69 @@ class HManager
         return $message;
     }
 
+    public function getUnicName(){
 
+        do{
+            $sid = microtime(true);
+            $sid = str_replace(".", "", $sid);
+        }while ($sid == self::$LAST_UNIC);
+
+
+
+
+        self::$LAST_UNIC = $sid;
+
+        return $sid;
+    }
+
+    public static function trim_r($arr)
+    {
+        return is_array($arr) ? array_map('self::trim_r', $arr) : trim($arr);
+    }
+
+    /**
+     * @param array $data
+     * @param bool $autoEcho
+     * @return string
+     */
+    static function genAttribs($data, $autoEcho = true){
+        $msg = "";
+        if(count($data)> 0){
+
+            foreach ($data as $att => $val) {
+                if(is_array($val)){
+                    $val = "'" . json_encode($val). "'";
+                }else{
+                    $val = "\"$val\"";
+                }
+
+                if($autoEcho){
+                    echo " $att = $val ";
+                }
+                else{
+                    $msg .= " $att = $val ";;
+                }
+
+            }
+        }
+        return $msg;
+    }
+
+    static function sessionEnabled(){
+        return session_id() != "";
+    }
+
+    static function enableSession($session_params=array()){
+
+        if(!self::sessionEnabled()){
+            session_start($session_params);
+        }
+    }
+
+    static function destroySession(){
+        if(self::sessionEnabled()){
+            session_destroy();
+            session_unset();
+        }
+    }
 }

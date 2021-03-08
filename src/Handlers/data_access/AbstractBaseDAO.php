@@ -1,17 +1,20 @@
 <?php
 
 
-namespace Handlers\models;
+namespace Handlers\data_access;
+
+
 
 
 abstract class AbstractBaseDAO extends SimpleDAO
 {
     protected $sumary;
-    public $autoconfigurable= FALSE;
+    public $autoconfigurable= false;
     public $selectID;
     public $selectName;
     public $errors;
-    public $logDesc;
+    public $escapeHtml;
+
     protected $map;
     protected $prototype;
     protected $baseSelect;
@@ -25,13 +28,21 @@ abstract class AbstractBaseDAO extends SimpleDAO
     private $fields_info;
 
     private static $cache;
+    protected $table;
+    protected $id;
 
-    function __construct($tabla, $id, $baseSelect='', $map='', $prototype='') {
-        parent::__construct($tabla, $id);
+    function __construct($table, $id, $baseSelect='', $map='', $prototype='') {
+        $this->table = $table;
+        $this->id = $id;
+        
         $this->baseSelect= $baseSelect;
         $this->map= $map;
         $this->prototype = $prototype;
         $this->execFind =true;
+        
+        $this->conectionName = SimpleDAO::getConnectionName();
+
+        $this->escapeHtml = parent::$escapeHTML;
     }
 
     function setHistory($table, $map){
@@ -44,33 +55,63 @@ abstract class AbstractBaseDAO extends SimpleDAO
     /**
      * @return QueryInfo
      */
-    function getSumary(){
+    function &getSumary(){
         return $this->sumary;
     }
 
-    function &insert($searchArray){
-        $this->sumary = parent::_insert(parent::getTableName(), $searchArray,$this->conectionName);
-        $this->_recordLog(array("Action" => "INSERT"));
+    /**
+     * @param $searchArray
+     * @param bool $putQuotesAndNull
+     * @return QueryInfo
+     */
+    function &insert($searchArray, $putQuotesAndNull=true){
+        if($putQuotesAndNull){
+            $searchArray = parent::putQuoteAndNull($searchArray, !self::REMOVE_TAG);
+        }
+
+        $this->sumary = parent::_insert($this->table, $searchArray,$this->conectionName);
+
+
+
         $this->_history($searchArray);
         return $this->sumary;
 
     }
 
-    function &update($searchArray, $condicion){
+    /**
+     * @param $searchArray
+     * @param $condicion
+     * @param bool $putQuotesAndNull
+     * @return QueryInfo
+     */
+    function &update($searchArray, $condition, $putQuotesAndNull=true){
+        if($putQuotesAndNull){
+            $condition = parent::putQuoteAndNull($condition, !self::REMOVE_TAG);
+            $searchArray = parent::putQuoteAndNull($searchArray, !self::REMOVE_TAG);
+        }
 
-        $this->sumary = parent::_update(parent::getTableName(), $searchArray, $condicion,$this->conectionName);
-        $this->_recordLog(array("Action" => "UPDATE"));
+        $this->sumary = parent::_update($this->table, $searchArray, $condition,$this->conectionName);
+
         //Update no hace history por que podria no estar actualizando algo solo por id, sino multiples registros
         return $this->sumary;
 
     }
 
-    function &delete($prototype){
-        $condicion = parent::mapToBd($prototype, $this->getDBMap());
-        $condicion = parent::putQuoteAndNull($condicion, !self::REMOVE_TAG);
+    /**
+     * @param $prototype
+     * @param bool $putQuotesAndNull
+     * @return QueryInfo
+     */
+    function &delete($prototype, $putQuotesAndNull=true){
+        $condition = parent::mapToBd($prototype, $this->getDBMap());
 
-        $this->sumary= parent::_delete(parent::getTableName(), $condicion,$this->conectionName);
-        $this->_recordLog(array("Action" => "DELETE"));
+        if($putQuotesAndNull){
+            $condition = parent::putQuoteAndNull($condition, !self::REMOVE_TAG);
+        }
+
+
+        $this->sumary= parent::_delete($this->table, $condition,$this->conectionName);
+
         //$this->_history($searchArray);
         return $this->sumary;
 
@@ -80,31 +121,46 @@ abstract class AbstractBaseDAO extends SimpleDAO
         $searchArray = parent::mapToBd($prototype, $this->getDBMap());
         $condicion = $this->getIdFromDBMap($searchArray);
         $condicion = parent::putQuoteAndNull($condicion);
-        $this->sumary = parent::_delete(parent::getTableName(), $condicion,$this->conectionName);
+        $this->sumary = parent::_delete($this->table, $condicion,$this->conectionName);
 
         return $this->sumary->total > 0;
     }
+
     /***
      * Busca si existe por ID
+     * @param $searchArray
+     * @param bool $putQuotesAndNull
+     * @return bool
      */
-    function exist($searchArray){
+    function exist($searchArray, $putQuotesAndNull=true){
         $searchArray = $this->getIdFromDBMap($searchArray);
 
-        $sql = "SELECT COUNT(*) FROM " . parent::getTableName() . " WHERE " . parent::getSQLFilter($searchArray);
-        return parent::execAndFetch($sql,$this->conectionName) > 0;
+        if($putQuotesAndNull){
+            $searchArray = parent::putQuoteAndNull($searchArray, !self::REMOVE_TAG);
+        }
+
+        return parent::_existBy($this->table, $searchArray, $this->conectionName);
     }
 
-    function existBy($searchArray){
+    /**
+     * @param $searchArray
+     * @param bool $putQuotesAndNull
+     * @return bool
+     */
+    function existBy($searchArray, $putQuotesAndNull=true){
+        if($putQuotesAndNull){
+            $searchArray = parent::putQuoteAndNull($searchArray, !self::REMOVE_TAG);
+        }
 
-        $sql = "SELECT COUNT(*) FROM " . parent::getTableName() . " WHERE " . parent::getSQLFilter($searchArray);
-        return parent::execAndFetch($sql,$this->conectionName) > 0;
+        return parent::_existBy($this->table, $searchArray, $this->conectionName);
+
     }
 
     function getIdFromDBMap($searchArray){
         $condicion = array();
 
-        foreach (parent::getId() as $key ) {
-            $condicion[parent::getTableName() . "." . $key] = (isset($searchArray[$key]))? $searchArray[$key] : null;
+        foreach ($this->id as $key ) {
+            $condicion[$this->table . "." . $key] = (isset($searchArray[$key]))? $searchArray[$key] : null;
         }
 
         return $condicion;
@@ -135,6 +191,9 @@ abstract class AbstractBaseDAO extends SimpleDAO
      * Guarda los datos del prototypo
      * Aplica getDBMap a el prototypo para obtener los nombres de los campos
      * Si se establee $update, fuerza a generar un update
+     * @param $prototype
+     * @param int $update
+     * @return bool
      */
     public function save($prototype, $update=2){
 
@@ -160,17 +219,17 @@ abstract class AbstractBaseDAO extends SimpleDAO
 
         if($update === parent::INSERT ){
 
-            $this->sumary = $this->insert($searchArray);
+            $this->sumary = $this->insert($searchArray, false);
 
         }else{
-            $condicion = array();
+            $condition = array();
 
-            foreach (parent::getId() as $key ) {
-                $condicion[$key] = $searchArray[$key];
+            foreach ($this->id as $key ) {
+                $condition[$key] = $searchArray[$key];
                 unset($searchArray[$key]);
             }
-            $this->sumary = $this->update($searchArray, $condicion);
-            $this->_history(array_merge($searchArray,$condicion));
+            $this->sumary = $this->update($searchArray, $condition, false);
+            $this->_history(array_merge($searchArray,$condition));
         }
 
         if($this->sumary->errorNo != 0){
@@ -180,11 +239,25 @@ abstract class AbstractBaseDAO extends SimpleDAO
         return ($this->sumary->errorNo == 0);
     }
 
+    /**
+     * @return QueryDynamicParams
+     */
+    //TODO falta implementar
+    public function getQueryParams(){
+        $params = null;
+        if($this->autoconfigurable){
+            $params = new QueryDynamicParams();
+        }
+        return $params;
+    }
+
     public function find($sql){
         $this->lastSelectQuery = $sql;
 
         if($this->execFind){
-            $this->sumary = parent::execQuery($sql, true, $this->autoconfigurable,$this->conectionName);
+            $params = $this->getQueryParams();
+            $this->sumary = parent::execQuery($sql,true,$params,$this->conectionName );
+
         }else{
             //habilita la ejecucion del query
             $this->enableExecFind();
@@ -196,7 +269,7 @@ abstract class AbstractBaseDAO extends SimpleDAO
     public function get()
     {
         if($this->sumary->result){
-            return parent::getNext($this->sumary);
+            return parent::getNext($this->sumary, $this->escapeHtml);
         }else{
             return false;
         }
@@ -205,7 +278,7 @@ abstract class AbstractBaseDAO extends SimpleDAO
     public function fetchAll()
     {
         if($this->sumary->result){
-            return parent::getAll($this->sumary);
+            return parent::getAll($this->sumary, $this->escapeHtml);
         }else{
             return false;
         }
@@ -217,7 +290,7 @@ abstract class AbstractBaseDAO extends SimpleDAO
         $temp = array();
         foreach ($searchArray as $key => $value) {
             if (strpos($key, '.') === false){
-                $temp[$this->tableName . "." . $key] = $value;
+                $temp[$this->table . "." . $key] = $value;
             }
 
         }
@@ -297,7 +370,7 @@ abstract class AbstractBaseDAO extends SimpleDAO
 
         $fields = array_keys($searchArray);
         $fields_all = implode(',', $this->quoteFieldNames($fields));
-        $sql = "SELECT " . $fields_all . " FROM " . $this->tableName . " LIMIT 0";
+        $sql = "SELECT " . $fields_all . " FROM " . $this->table . " LIMIT 0";
         $sumary = parent::execQuery($sql, true);
 
         $i = 0;
@@ -390,17 +463,7 @@ abstract class AbstractBaseDAO extends SimpleDAO
         return $this->sumary->new_id;
     }
 
-    function _recordLog($searchArray){
-        if(self::$enableRecordLog){
-            $searchArray["desc"] = $this->logDesc;
-            $searchArray["tabla"] = parent::getTableName();
-            if(isset($_SESSION["USER_ID"])) $searchArray["user_id"] = $_SESSION["USER_ID"];
-            $searchArray = parent::putQuoteAndNull($searchArray);
 
-            $sum = parent::_insert(self::$recordTable, $searchArray);
-
-        }
-    }
 
     function setConnectionName($name){
         $this->conectionName = $name;
@@ -409,14 +472,10 @@ abstract class AbstractBaseDAO extends SimpleDAO
 
     function getPrefixedID($sequence = null){
         if(!$sequence){
-            $sequence = $this->tableName;
+            $sequence = $this->table;
         }
 
-        if(APP_ENABLE_BD_FUNCTION){
-            $sql = "SELECT GET_NEXT_ID('$sequence')";
 
-            $newID = $this->execAndFetch($sql);
-        }else{
             //busca secuencial
             $sql = "SELECT prefix, size, fill_with, last_id , sufix, eval
 				        
@@ -454,7 +513,7 @@ abstract class AbstractBaseDAO extends SimpleDAO
 										
 						) as _result";
             $newID = $this->execAndFetch($sql);
-        }
+
 
         return $newID;
 
@@ -500,8 +559,8 @@ abstract class AbstractBaseDAO extends SimpleDAO
 
         $fields = array_keys($searchArray);
         $fields_all = implode(',', $this->quoteFieldNames($fields));
-        $sql = "SELECT " . $fields_all . " FROM " . $this->tableName . " LIMIT 0";
-        $sumary = parent::execQuery($sql, true, false, $this->conectionName);
+        $sql = "SELECT " . $fields_all . " FROM " . $this->table . " LIMIT 0";
+        $sumary = parent::execQuery($sql, true, null, $this->conectionName);
 
         $i = 0;
         $total = parent::getNumFields($sumary);
@@ -562,7 +621,7 @@ abstract class AbstractBaseDAO extends SimpleDAO
     }
 
     public function truncate(){
-        $sql = "TRUNCATE " . $this->tableName;
+        $sql = "TRUNCATE " . $this->table;
 
         return self::execNoQuery($sql);
     }

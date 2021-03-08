@@ -4,7 +4,8 @@
 namespace Handlers\components;
 
 
-use Handlers\models\SimpleDAO;
+use Handlers\data_access\SimpleDAO;
+
 use Handlers\models\TrackLogDAO;
 use SimpleXMLElement;
 
@@ -12,7 +13,7 @@ class ResponseHandler extends Handler
 {
     const KEY_STATUS = "status";
     const KEY_STATUS_CODE = "status_code";
-    const KEY_ACCESS_TOKEN = "access_token";
+    const KEY_ACCESS_TOKEN = "token";
     const KEY_CLIENT_TOKEN = "client_id";
     const KEY_ERRORS = "errors";
     const KEY_WARNING = "warning";
@@ -27,7 +28,7 @@ class ResponseHandler extends Handler
 
     function __construct(){
         $this->status_added = false;
-        SimpleDAO::escaoeHTML_OFF();
+        SimpleDAO::escapeHTML_OFF();
         $this->configErrorHandler();
 
         //si no hay id de log, osea si es el primer llamado
@@ -45,7 +46,7 @@ class ResponseHandler extends Handler
         }
 
         $this->setGlobalWarning();
-        $this->sendWarnging();
+        $this->sendWarning();
 
         //si no se ha puesto el status
         if(!$this->status_added){
@@ -185,7 +186,7 @@ class ResponseHandler extends Handler
     private function configErrorHandler(){
         set_error_handler(function($errno, $errstr, $errfile, $errline, $errcontext) {
             // error was suppressed with the @-operator
-            Handler::$SESSION["XERR"][] = "$errno, $errstr, $errfile, $errline";
+            Handler::$SESSION["XERR"][] = "$errno, $errstr, $errfile, $errline, $errcontext";
         });
     }
 

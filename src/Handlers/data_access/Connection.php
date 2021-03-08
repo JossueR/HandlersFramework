@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Handlers\models;
+namespace Handlers\data_access;
 
 
 class Connection
@@ -15,6 +15,8 @@ class Connection
     public $pass;
 
     public $db;
+
+    public $alias_name;
 
     function __construct($host=null,$bd=null,$usuario=null,$pass=null, $connection = null){
         $this->host=$host;

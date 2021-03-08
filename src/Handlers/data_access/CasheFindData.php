@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Handlers\models;
+namespace Handlers\data_access;
 
 
 class CasheFindData

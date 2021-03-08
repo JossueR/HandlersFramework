@@ -4,6 +4,8 @@
 namespace Handlers\models;
 
 
+use Handlers\data_access\AbstractBaseDAO;
+
 class ConfigVarDAO extends AbstractBaseDAO
 {
 
@@ -34,6 +36,7 @@ class ConfigVarDAO extends AbstractBaseDAO
     }
 
     function getBaseSelec(){
+        /** @noinspection SqlWithoutWhere */
         $sql = "SELECT `config_vars`.`var`,
 					    `config_vars`.`val`
 					    

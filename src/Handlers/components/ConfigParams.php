@@ -15,4 +15,8 @@ class ConfigParams
     public static $APP_CONTENT_TITLE;
     public static $CONF_PERMISSION_CHECK;
     public static $APP_DEFAULT_HANDLER;
+    public static $APP_ENABLED_LANG = array(
+        "en",
+        "es"
+    );
 }

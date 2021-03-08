@@ -2,7 +2,7 @@
 
 
 namespace Handlers\models;
-
+use Handlers\data_access\AbstractBaseDAO;
 
 class ConnectionFromDAO extends AbstractBaseDAO
 {
@@ -42,6 +42,7 @@ class ConnectionFromDAO extends AbstractBaseDAO
     }
 
     function getBaseSelec(){
+        /** @noinspection SqlWithoutWhere */
         $sql = "SELECT `connection_from`.`id`,
 					    `connection_from`.`url`,
 					    `connection_from`.`ip`,
