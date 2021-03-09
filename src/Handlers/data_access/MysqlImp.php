@@ -515,7 +515,9 @@ class MysqlImp extends BDEngine
             $this->getSQLFilter($searchArray, self::MERGE_TYPE_AND, $noToshTag);
 
        $summary = $this->execQuery($connectionName,$sql,true);
-        $val = $this->getNext($summary);
+        $row = $this->getNext($summary);
+        $val = reset($row);
+
         return $val > 0;
     }
 }

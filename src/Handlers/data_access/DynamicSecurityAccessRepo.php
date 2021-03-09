@@ -15,6 +15,11 @@ class DynamicSecurityAccessRepo extends \Handlers\components\CacheHManager
     private static $instance;
 
     /**
+     * @var string
+     */
+    private $lastFailedPermission;
+
+    /**
      * @return DynamicSecurityAccessRepo
      */
     public static function getInstance(){
@@ -24,6 +29,16 @@ class DynamicSecurityAccessRepo extends \Handlers\components\CacheHManager
 
         return self::$instance;
     }
+
+    /**
+     * @return string
+     */
+    public function getLastFailedPermission()
+    {
+        return $this->lastFailedPermission;
+    }
+
+
 
     /**
      * DynamicSecurityAccessRepo constructor.
@@ -56,13 +71,15 @@ class DynamicSecurityAccessRepo extends \Handlers\components\CacheHManager
         //SI esta habilitado la revicion de permisos
 
         if($this->isEnableHandlerActionSecurity()){
-            var_dump("Verificacion habilitada");
+            //var_dump("Verificacion habilitada");
             $permission = $this->getVar($class_name_invoker);
 
             if($permission){
                 $status = PermissionRepo::getInstance()->havePermission($permission);
-            }else{
-                var_dump("no requiere permiso");
+
+                if(!$status){
+                    $this->lastFailedPermission = $permission;
+                }
             }
         }
 
@@ -71,12 +88,16 @@ class DynamicSecurityAccessRepo extends \Handlers\components\CacheHManager
     }
 
     private function Record($invoker){
+
         if($this->isEnableRecordSecurity()) {
             $dao = new SecAccessDAO();
 
             $d = array(
                 "invoker" => $invoker,
+                "method" => ".",
             );
+
+
             //si no existe ya registrado
             if (!$dao->exist($d)) {
                 $dao->save($d);
@@ -89,6 +110,6 @@ class DynamicSecurityAccessRepo extends \Handlers\components\CacheHManager
     }
 
     function isEnableRecordSecurity(){
-        return ConfigVarRepo::getInstance()->getBooleanVar("ENABLE_RECORD_SECURITY");;
+        return ConfigVarRepo::getInstance()->getBooleanVar("ENABLE_RECORD_SECURITY");
     }
 }

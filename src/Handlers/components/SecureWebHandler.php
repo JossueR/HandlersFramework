@@ -32,7 +32,7 @@ class SecureWebHandler extends WebHandler
             //TODO si esta logeado, valida si requere permiso
             ConfigVarRepo::getInstance()->clearAllVars();
            if(! DynamicSecurityAccessRepo::getInstance()->checkHandlerActionAccess($this) ){
-               throw new Exception('requiere permiso');
+               throw new Exception('requiere permiso:' . DynamicSecurityAccessRepo::getInstance()->getLastFailedPermission());
            }
         }
     }

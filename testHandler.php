@@ -31,4 +31,9 @@ class testHandler extends WebHandler
         var_dump(LoggedUserRepo::getInstance()
             ->isLogged());
     }
+
+    function resetAction(){
+        self::destroySession();
+        echo "reset ok";
+    }
 }

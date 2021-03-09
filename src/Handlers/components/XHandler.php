@@ -4,6 +4,7 @@
 namespace Handlers\components;
 
 
+use Exception;
 use Handlers\data_access\LangRepo;
 use Handlers\data_access\LangRepoDefault;
 
@@ -358,23 +359,26 @@ class XHandler extends HManager
         if ($className != "Handler" ) {
             self::$handler = $partes_ruta["filename"];
 
-            $mi_clase = new $className();
+            try{
+                $mi_clase = new $className();
 
-            $use_session=false;
+                if(method_exists($mi_clase, self::$do . self::$actionSufix)){
+                    $method = self::$do . self::$actionSufix;
 
-            if(method_exists($mi_clase, self::$do . self::$actionSufix)){
-                $method = self::$do . self::$actionSufix;
-
-                $mi_clase->$method();
-                $status = true;
-            }else{
-                $method = "index" . self::$actionSufix;
-
-                if(method_exists($mi_clase, $method)){
                     $mi_clase->$method();
                     $status = true;
+                }else{
+                    $method = "index" . self::$actionSufix;
+
+                    if(method_exists($mi_clase, $method)){
+                        $mi_clase->$method();
+                        $status = true;
+                    }
                 }
+            }catch (Exception $e){
+                //var_dump($e);
             }
+
         }
 
         return $status;

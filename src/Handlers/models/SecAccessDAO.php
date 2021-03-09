@@ -3,48 +3,16 @@
 
 namespace Handlers\models;
 
-use Handlers\data_access\AbstractBaseDAO;
-class SecAccessDAO extends AbstractBaseDAO
+
+use Handlers\data_access\AutoImplementedDAO;
+
+class SecAccessDAO extends AutoImplementedDAO
 {
     function __construct() {
         parent::__construct("sec_access", array("invoker"));
     }
 
-    function getPrototype(){
-        return array(
-            'invoker'=>null,
-            'method' => null,
-            'permission' => null,
-            'description' => null
-        );
-    }
 
-
-    function getDBMap(){
-        return array(
-            'invoker' => 'invoker',
-            'method' => 'method',
-            'permission' => 'permission',
-            'description' => 'description',
-            'active' => 'active'
-        );
-    }
-
-    function getBaseSelec(){
-
-
-        return "SELECT `sec_access`.`invoker`,
-					    `sec_access`.`method`,
-					    `sec_access`.`permission`,
-					    `sec_access`.`description`,
-					    `sec_access`.`create_date`,
-					    `sec_access`.`create_user`,
-					    `sec_access`.`update_date`,
-					    `sec_access`.`update_user`,
-					    `sec_access`.`active`
-					FROM `sec_access`
-					WHERE ";
-    }
 
 
     function getActives(){
@@ -86,30 +54,6 @@ class SecAccessDAO extends AbstractBaseDAO
     }
 
 
-/*
-
-    function &insert($searchArray){
-        $defaul["create_date"] = self::$SQL_TAG."now()";
-        $defaul["create_user"] = self::getDataVar("USER_NAME");
-        $defaul["active"] = self::REG_ACTIVO_TX;
-        $defaul = parent::putQuoteAndNull($defaul);
-
-        $searchArray = array_merge($searchArray, $defaul);
-
-
-        return parent::insert($searchArray);
-
-    }
-
-    function &update($searchArray, $condicion){
-        $defaul["update_date"] = self::$SQL_TAG."now()";
-        $defaul["update_user"] = self::getDataVar("USER_NAME");
-        $defaul = parent::putQuoteAndNull($defaul);
-
-        $searchArray = array_merge($searchArray, $defaul);
-        return parent::update($searchArray, $condicion);
-    }
-*/
     function getByUser($user_id){
         $searchArray["t1.active"] = self::REG_ACTIVO_TX;
         $searchArray = self::putQuoteAndNull($searchArray, !self::REMOVE_TAG);
