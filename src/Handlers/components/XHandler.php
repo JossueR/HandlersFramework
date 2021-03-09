@@ -150,6 +150,7 @@ class XHandler extends HManager
         }
     }
 
+
     public static function enableRawRequest()
     {
         $raw = file_get_contents('php://input');

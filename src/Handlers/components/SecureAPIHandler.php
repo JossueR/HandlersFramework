@@ -5,16 +5,17 @@ namespace Handlers\components;
 
 
 
+use Handlers\data_access\LangRepo;
+use Handlers\data_access\LoggedUserRepo;
 use Handlers\data_access\SimpleDAO;
 use Handlers\models\ConnectionFromDAO;
 use Handlers\models\PermissionsDAO;
 
-class SecureResponseHandler extends ResponseHandler
+class SecureAPIHandler extends APIHandler
 {
     protected $access_token;
     protected $user;
     protected $username;
-    protected $customer_id;
     protected $connection_data;
     private static $ip_check_mode;
 
@@ -72,7 +73,6 @@ class SecureResponseHandler extends ResponseHandler
 
             $this->access_token = $conection_data["token"];
             $this->username = $conection_data["user"];
-            $this->customer_id = $conection_data["customer_id"];
             $this->connection_data = $conection_data;
 
             SimpleDAO::setDataVar("USER_NAME", $this->username );
@@ -81,21 +81,14 @@ class SecureResponseHandler extends ResponseHandler
     }
 
     private function loadSession(){
-        $premissiondao = new PermissionsDAO();
-        $all = $premissiondao->loadPermissions($this->connection_data["user_id"]);
-        DynamicSecurityAccess::loadPermissions($all);
+
+
 
 
     }
 
     private function  setUsername(){
-        if(!isset(Handler::$SESSION['USER_NAME'] )){
-
-            Handler::$SESSION['USER_ID'] = $this->connection_data["user_id"];
-            Handler::$SESSION['USER_NAME'] = $this->username;
-        }
-
-
+        LoggedUserRepo::getInstance()->loadUserInfo($this->connection_data["user_id"]);
     }
 
     private function updateLast(){

@@ -1,35 +1,19 @@
 <?php
 namespace test_project;
 
+use Handlers\components\APIHandler;
 use Handlers\components\WebHandler;
 
 
 use Handlers\data_access\LoggedUserRepo;
 use Handlers\data_access\PermissionRepo;
 
-class testHandler extends WebHandler
+class testHandler extends APIHandler
 {
     function indexAction(){
-        echo "ok";
-/*
-        var_dump( PermissionRepo::getInstance()
-            ->setUserId(2)
-            ->havePermission("CONF-02") );
+        self::setVar("st","ok");
 
-        var_dump( PermissionRepo::getInstance()
-            ->setUserId(2)
-            ->havePermission("CONF-03") );
-
-        var_dump( PermissionRepo::getInstance()
-            ->setUserId(2)
-            ->havePermission("CONF-04") );
-*/
-        var_dump(LoggedUserRepo::getInstance()
-            ->loadUserInfo(2)
-            ->getUsername());
-
-        var_dump(LoggedUserRepo::getInstance()
-            ->isLogged());
+        $this->toJSON();
     }
 
     function resetAction(){

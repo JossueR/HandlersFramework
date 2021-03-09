@@ -9,7 +9,7 @@ use Handlers\data_access\SimpleDAO;
 use Handlers\models\TrackLogDAO;
 use SimpleXMLElement;
 
-class ResponseHandler extends Handler
+class APIHandler extends XHandler
 {
     const KEY_STATUS = "status";
     const KEY_STATUS_CODE = "status_code";
@@ -96,22 +96,22 @@ class ResponseHandler extends Handler
     }
 
     protected function success(){
-        $this->setVar(ResponseHandler::KEY_STATUS, 'success');
-        $this->setVar(ResponseHandler::KEY_STATUS_CODE, '100');
+        $this->setVar(APIHandler::KEY_STATUS, 'success');
+        $this->setVar(APIHandler::KEY_STATUS_CODE, '100');
         $this->status_added = true;
     }
 
     protected function serverError($errorCode = '500'){
-        $this->setVar(ResponseHandler::KEY_STATUS, 'server_error');
-        $this->setVar(ResponseHandler::KEY_STATUS_CODE, $errorCode);
+        $this->setVar(APIHandler::KEY_STATUS, 'server_error');
+        $this->setVar(APIHandler::KEY_STATUS_CODE, $errorCode);
 
-        $this->setVar(ResponseHandler::KEY_ERRORS,  $this->errors);
+        $this->setVar(APIHandler::KEY_ERRORS,  $this->errors);
         $this->status_added = true;
     }
 
     private function sendWarning(){
         if($this->warning != null && count($this->warning) > 0){
-            $this->setVar(ResponseHandler::KEY_WARNING,  $this->warning);
+            $this->setVar(APIHandler::KEY_WARNING,  $this->warning);
         }
     }
 
@@ -176,8 +176,8 @@ class ResponseHandler extends Handler
     }
 
     protected function setStatus($status, $code){
-        $this->setVar(ResponseHandler::KEY_STATUS, $status);
-        $this->setVar(ResponseHandler::KEY_STATUS_CODE, $code);
+        $this->setVar(APIHandler::KEY_STATUS, $status);
+        $this->setVar(APIHandler::KEY_STATUS_CODE, $code);
 
 
         $this->status_added = true;
@@ -185,14 +185,15 @@ class ResponseHandler extends Handler
 
     private function configErrorHandler(){
         set_error_handler(function($errno, $errstr, $errfile, $errline, $errcontext) {
-            // error was suppressed with the @-operator
-            Handler::$SESSION["XERR"][] = "$errno, $errstr, $errfile, $errline, $errcontext";
+            ErrorTracker::getInstance()->addError("$errno, $errstr, $errfile, $errline, $errcontext");
+
         });
     }
 
     private function setGlobalWarning(){
-        if(isset(Handler::$SESSION["XERR"]) && count(Handler::$SESSION["XERR"]) > 0){
-            foreach (Handler::$SESSION["XERR"] as $key => $msg) {
+        $all_errors = ErrorTracker::getInstance()->getAllErrors();
+        if(is_array($all_errors) && count($all_errors) > 0){
+            foreach ($all_errors as $key => $msg) {
                 $this->warning[] = $msg;
             }
         }
