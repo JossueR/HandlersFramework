@@ -27,7 +27,7 @@ class ConfigParams
         $raw_file = file_get_contents($path_to_json_file);
 
         if($raw_file){
-            $json_conf = json_decode($raw_file);
+            $json_conf = json_decode($raw_file,true);
 
             if(isset($json_conf["APP_CONTENT_BODY"]) && $json_conf["APP_CONTENT_BODY"] != ""){
                 self::$APP_CONTENT_BODY = $json_conf["APP_CONTENT_BODY"];
