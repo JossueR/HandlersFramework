@@ -346,15 +346,25 @@ class XHandler extends HManager
     public static function exec($namespace){
 
         $status = false;
-        self::$do = self::getRequestAttr('do');
+        self::$do = self::getRequestAttr(ConfigParams::$APP_DEFAULT_ACTION_PARAM);
         if(!self::$do){
-            self::$do = self::getRequestAttr('do',false);
+            self::$do = self::getRequestAttr(ConfigParams::$APP_DEFAULT_ACTION_PARAM,false);
         }
 
         self::$handler = (isset($_SERVER['REQUEST_URI']))? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF'];
         self::$handler = explode("?", self::$handler);
         self::$handler = self::$handler[0];
         $partes_ruta = pathinfo(self::$handler);
+
+
+        if(strpos($partes_ruta["dirname"], ConfigParams::$PATH_ROOT) !== false){
+            $class_path = str_replace(ConfigParams::$PATH_ROOT,"", $partes_ruta["dirname"]);
+
+            $namespace .= "\\" . $class_path;
+        }
+
+
+
 
         $className = "\\" . $namespace . "\\" . $partes_ruta["filename"] . self::$handlerSufix;
         if ($className != "Handler" ) {
