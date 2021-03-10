@@ -1,7 +1,7 @@
 {
     "name": "sysmyapp.com/handlers-framework",
-    "description": "Framework php ligero MVC",
-    "type": "project",
+    "description": "Framework php ligero MVC para construcción de APIS RESTFULL y aplicaciones web en php",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
@@ -11,8 +11,7 @@
     ],
 	"autoload": {
         "psr-4": {
-            "Handlers\\": "src/Handlers",
-            "test_project\\": "."
+            "Handlers\\": "src/Handlers"
         }
     },
     "require": {
