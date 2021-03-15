@@ -184,6 +184,8 @@ class DefaultJsBride implements JsBridge
     }
 
 
-
-
+    function showTableControls($name, $totalRows, $action, $param, $controls = null, $auto = true)
+    {
+        // TODO: Implement showTableControls() method.
+    }
 }

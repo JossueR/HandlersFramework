@@ -209,7 +209,7 @@ class WebHandler extends XHandler
                 $script = "";
                 $script_end = "";
             }
-            return $script . "dom_update('$action','$post','".ConfigParams::$APP_CONTENT_BODY."')" . $script_end;
+            return $script . "dom_update('$action','$post','".ConfigParams::$APP_CONTENT_MAIN."')" . $script_end;
         }else{
             return false;
         }
@@ -257,7 +257,7 @@ class WebHandler extends XHandler
 
 
 
-            $command =   self::getJsBride()->asyncLoad($action,$post,ConfigParams::$APP_CONTENT_BODY,!$auto);
+            $command =   self::getJsBride()->asyncLoad($action,$post,ConfigParams::$APP_CONTENT_MAIN,!$auto);
 
             if($auto){
                 echo $command;

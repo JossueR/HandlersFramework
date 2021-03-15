@@ -8,7 +8,8 @@ use Handlers\data_access\SimpleDAO;
 
 class ConfigParams
 {
-    public static $APP_CONTENT_BODY;
+    public static $APP_CONTENT_MAIN;
+    public static $APP_CONTENT_HIDDEN;
     public static $APP_DEFAULT_LIMIT_PER_PAGE;
     public static $PATH_ROOT;
     public static $PATH_PRIVATE;
@@ -17,6 +18,7 @@ class ConfigParams
     public static $APP_CONTENT_TITLE;
     public static $CONF_PERMISSION_CHECK;
     public static $APP_DEFAULT_HANDLER;
+    public static $APP_DEFAULT_SECURE_HANDLER;
     public static $APP_DEFAULT_ACTION_PARAM="do";
     public static $APP_ENABLED_LANG = array(
         "en",
@@ -30,7 +32,7 @@ class ConfigParams
             $json_conf = json_decode($raw_file,true);
 
             if(isset($json_conf["APP_CONTENT_BODY"]) && $json_conf["APP_CONTENT_BODY"] != ""){
-                self::$APP_CONTENT_BODY = $json_conf["APP_CONTENT_BODY"];
+                self::$APP_CONTENT_MAIN = $json_conf["APP_CONTENT_BODY"];
             }
 
             if(isset($json_conf["APP_DEFAULT_LIMIT_PER_PAGE"]) && $json_conf["APP_DEFAULT_LIMIT_PER_PAGE"] != ""){
@@ -71,6 +73,14 @@ class ConfigParams
 
             if(isset($json_conf["APP_ENABLED_LANG"]) && $json_conf["APP_ENABLED_LANG"] != ""){
                 self::$APP_ENABLED_LANG = $json_conf["APP_ENABLED_LANG"];
+            }
+
+            if(isset($json_conf["APP_CONTENT_HIDDEN"]) && $json_conf["APP_CONTENT_HIDDEN"] != ""){
+                self::$APP_CONTENT_HIDDEN = $json_conf["APP_CONTENT_HIDDEN"];
+            }
+
+            if(isset($json_conf["APP_DEFAULT_SECURE_HANDLER"]) && $json_conf["APP_DEFAULT_SECURE_HANDLER"] != ""){
+                self::$APP_DEFAULT_SECURE_HANDLER = $json_conf["APP_DEFAULT_SECURE_HANDLER"];
             }
 
             if(isset($json_conf["DB"]) &&
