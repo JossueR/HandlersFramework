@@ -308,7 +308,7 @@ class MysqlImp extends BDEngine
             }
 
         }
-        $campos = implode($join, $campos);
+        $campos = implode(" " . $join . " ", $campos);
         return " (" . $campos . ") ";
     }
 
