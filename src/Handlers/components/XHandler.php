@@ -209,6 +209,8 @@ class XHandler extends HManager
     public function getHandlerName()
     {
         $n = get_class($this);
+        $path = explode('\\', $n);
+        $n = array_pop($path);
 
         $i = strpos($n, $this->getHandlerSufix());
 
