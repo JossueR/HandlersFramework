@@ -8,10 +8,10 @@ namespace Handlers\data_access;
 
 class MysqlImp extends BDEngine
 {
-    const MERGE_TYPE_HAVING = "HAVING";
-    const MERGE_TYPE_WHERE = "WHERE";
-    const MERGE_TYPE_AND = "AND";
-    const MERGE_TYPE_OR = "OR";
+    const MERGE_TYPE_HAVING = " HAVING ";
+    const MERGE_TYPE_WHERE = " WHERE ";
+    const MERGE_TYPE_AND = " AND ";
+    const MERGE_TYPE_OR = " OR ";
 
     public function connect($host, $bd, $usuario, $pass)
     {
