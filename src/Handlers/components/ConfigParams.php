@@ -41,6 +41,8 @@ class ConfigParams
         if($raw_file){
             $json_conf = json_decode($raw_file,true);
 
+            self::$raw_config = $json_conf;
+
             if(isset($json_conf["QUERY_PARAM_FILTERS"]) && $json_conf["QUERY_PARAM_FILTERS"] != ""){
                 self::$QUERY_PARAM_FILTERS = $json_conf["QUERY_PARAM_FILTERS"];
             }
