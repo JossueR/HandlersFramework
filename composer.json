@@ -17,6 +17,7 @@
     "require": {
         "ext-json": "*",
         "ext-mysqli": "*",
-      "ext-simplexml": "*"
+      "ext-simplexml": "*",
+      "ext-curl": "*"
     }
 }

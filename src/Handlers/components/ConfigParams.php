@@ -11,6 +11,7 @@ class ConfigParams
     public static $APP_CONTENT_MAIN;
     public static $APP_CONTENT_HIDDEN;
     public static $APP_DEFAULT_LIMIT_PER_PAGE;
+    public static $APP_DEFAULT_MAX_LIMIT_PER_PAGE;
     public static $PATH_ROOT;
     public static $PATH_PRIVATE;
     public static $APP_LANG;
@@ -25,11 +26,44 @@ class ConfigParams
         "es"
     );
 
+    private static $raw_config;
+
+    public static $QUERY_PARAM_FILTERS;
+    public static $QUERY_PARAM_FILTER_KEYS;
+    public static $QUERY_PARAM_ORDER_FIELD;
+    public static $QUERY_PARAM_ORDER_TYPE;
+    public static $QUERY_PARAM_PAGE;
+    public static $QUERY_PARAM_CANT_BY_PAGE;
+
     public static function loadConfigJson($path_to_json_file){
         $raw_file = file_get_contents($path_to_json_file);
 
         if($raw_file){
             $json_conf = json_decode($raw_file,true);
+
+            if(isset($json_conf["QUERY_PARAM_FILTERS"]) && $json_conf["QUERY_PARAM_FILTERS"] != ""){
+                self::$QUERY_PARAM_FILTERS = $json_conf["QUERY_PARAM_FILTERS"];
+            }
+
+            if(isset($json_conf["QUERY_PARAM_FILTER_KEYS"]) && $json_conf["QUERY_PARAM_FILTER_KEYS"] != ""){
+                self::$QUERY_PARAM_FILTER_KEYS = $json_conf["QUERY_PARAM_FILTER_KEYS"];
+            }
+
+            if(isset($json_conf["QUERY_PARAM_ORDER_FIELD"]) && $json_conf["QUERY_PARAM_ORDER_FIELD"] != ""){
+                self::$QUERY_PARAM_ORDER_FIELD = $json_conf["QUERY_PARAM_ORDER_FIELD"];
+            }
+
+            if(isset($json_conf["QUERY_PARAM_ORDER_TYPE"]) && $json_conf["QUERY_PARAM_ORDER_TYPE"] != ""){
+                self::$QUERY_PARAM_ORDER_TYPE = $json_conf["QUERY_PARAM_ORDER_TYPE"];
+            }
+
+            if(isset($json_conf["QUERY_PARAM_PAGE"]) && $json_conf["QUERY_PARAM_PAGE"] != ""){
+                self::$QUERY_PARAM_PAGE = $json_conf["QUERY_PARAM_PAGE"];
+            }
+
+            if(isset($json_conf["QUERY_PARAM_CANT_BY_PAGE"]) && $json_conf["QUERY_PARAM_CANT_BY_PAGE"] != ""){
+                self::$QUERY_PARAM_CANT_BY_PAGE = $json_conf["QUERY_PARAM_CANT_BY_PAGE"];
+            }
 
             if(isset($json_conf["APP_CONTENT_BODY"]) && $json_conf["APP_CONTENT_BODY"] != ""){
                 self::$APP_CONTENT_MAIN = $json_conf["APP_CONTENT_BODY"];
@@ -37,6 +71,10 @@ class ConfigParams
 
             if(isset($json_conf["APP_DEFAULT_LIMIT_PER_PAGE"]) && $json_conf["APP_DEFAULT_LIMIT_PER_PAGE"] != ""){
                 self::$APP_DEFAULT_LIMIT_PER_PAGE = $json_conf["APP_DEFAULT_LIMIT_PER_PAGE"];
+            }
+
+            if(isset($json_conf["APP_DEFAULT_MAX_LIMIT_PER_PAGE"]) && $json_conf["APP_DEFAULT_MAX_LIMIT_PER_PAGE"] != ""){
+                self::$APP_DEFAULT_MAX_LIMIT_PER_PAGE = $json_conf["APP_DEFAULT_MAX_LIMIT_PER_PAGE"];
             }
 
             if(isset($json_conf["PATH_ROOT"]) && $json_conf["PATH_ROOT"] != ""){
@@ -93,5 +131,35 @@ class ConfigParams
             }
         }
 
+    }
+
+    /** Busca en un array $search_obj el valor que se encuentra en la ruta $config_path
+     *
+     * @param string $config_path indica la ruta para llegar al valor, debe estar separada por puntos
+     * @param array $search_obj arreglo asociativo como los que devuelve json_decode(..., true)
+     * @return mixed|null
+     */
+    public static function getConfig($config_path, $search_obj=null){
+        $path_slices = explode(".", $config_path);
+        $value = null;
+
+        if($search_obj == null){
+            $search_obj = self::$raw_config;
+        }
+
+        foreach ($path_slices as $path) {
+            if(isset($search_obj) && isset($search_obj[$path])){
+                $search_obj = $search_obj[$path];
+            }else{
+                $search_obj = null;
+                break;
+            }
+        }
+
+        if($search_obj){
+            $value = $search_obj;
+        }
+
+        return $value;
     }
 }

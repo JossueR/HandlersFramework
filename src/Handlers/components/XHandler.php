@@ -7,6 +7,7 @@ namespace Handlers\components;
 use Exception;
 use Handlers\data_access\LangRepo;
 use Handlers\data_access\LangRepoDefault;
+use Handlers\data_access\QueryDynamicParams;
 
 class XHandler extends HManager
 {
@@ -395,5 +396,38 @@ class XHandler extends HManager
         }
 
         return $status;
+    }
+
+    /**
+     * @return QueryDynamicParams
+     */
+    public static function getQueryDynamicParams(){
+        $params = new QueryDynamicParams();
+
+
+        $params->filter_keys = self::getRequestAttr(ConfigParams::$QUERY_PARAM_FILTER_KEYS);
+        $params->filters = self::getRequestAttr(ConfigParams::$QUERY_PARAM_FILTERS);
+
+        $order_field = self::getRequestAttr(ConfigParams::$QUERY_PARAM_ORDER_FIELD);
+        $order_asc = self::getRequestAttr(ConfigParams::$QUERY_PARAM_ORDER_TYPE);
+        $params->addOrderField($order_field,$order_asc);
+
+        $page = self::getRequestAttr(ConfigParams::$QUERY_PARAM_PAGE);
+        $cant_by_page = self::getRequestAttr(ConfigParams::$QUERY_PARAM_CANT_BY_PAGE);
+
+        if(!$page){
+            $page =0;
+        }
+
+        if($cant_by_page == null || !is_numeric($cant_by_page) ){
+            $cant_by_page = ConfigParams::$APP_DEFAULT_LIMIT_PER_PAGE;
+        }else{
+            if($cant_by_page > ConfigParams::$APP_DEFAULT_MAX_LIMIT_PER_PAGE){
+                $cant_by_page = ConfigParams::$APP_DEFAULT_LIMIT_PER_PAGE;
+            }
+        }
+        $params->setEnablePaging($cant_by_page,$page);
+
+        return $params;
     }
 }
