@@ -516,7 +516,13 @@ class MysqlImp extends BDEngine
 
        $summary = $this->execQuery($connectionName,$sql,true);
         $row = $this->getNext($summary);
-        $val = reset($row);
+
+        if($row){
+            $val = reset($row);
+        }else{
+            $val = 0;
+        }
+
 
         return $val > 0;
     }

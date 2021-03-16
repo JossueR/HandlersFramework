@@ -48,6 +48,6 @@ class UserDAO extends AutoImplementedDAO
         $searchArray = self::putQuoteAndNull($searchArray, !self::REMOVE_TAG);
 
 
-        return $this->existBy($searchArray);
+        return $this->existBy($searchArray,false);
     }
 }
