@@ -67,8 +67,8 @@ class ConfigParams
                 self::$QUERY_PARAM_CANT_BY_PAGE = $json_conf["QUERY_PARAM_CANT_BY_PAGE"];
             }
 
-            if(isset($json_conf["APP_CONTENT_BODY"]) && $json_conf["APP_CONTENT_BODY"] != ""){
-                self::$APP_CONTENT_MAIN = $json_conf["APP_CONTENT_BODY"];
+            if(isset($json_conf["APP_CONTENT_MAIN"]) && $json_conf["APP_CONTENT_MAIN"] != ""){
+                self::$APP_CONTENT_MAIN = $json_conf["APP_CONTENT_MAIN"];
             }
 
             if(isset($json_conf["APP_DEFAULT_LIMIT_PER_PAGE"]) && $json_conf["APP_DEFAULT_LIMIT_PER_PAGE"] != ""){

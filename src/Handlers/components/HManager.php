@@ -182,7 +182,7 @@ class HManager
      */
     static function genAttribs($data, $autoEcho = true){
         $msg = "";
-        if(count($data)> 0){
+        if(is_array($data) && count($data)> 0){
 
             foreach ($data as $att => $val) {
                 if(is_array($val)){

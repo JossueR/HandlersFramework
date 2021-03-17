@@ -233,12 +233,17 @@ class WebHandler extends XHandler
 
         if(!$href){
 
-            $onclick = 'onclick="'.$link.'"';
+            if($link) {
+                $onclick = 'onclick="' . $link . '"';
+            }
+
             $href = 'javascript: void(0)';
         }
 
-        $attrs = self::genAttribs($html_params, false);
-        $link = "<a href='$href' $onclick $attrs >$text</a>";
+        if($html_params) {
+            $attrs = self::genAttribs($html_params, false);
+            $link = "<a href='$href' $onclick $attrs >$text</a>";
+        }
 
         if($show){
             echo $link;

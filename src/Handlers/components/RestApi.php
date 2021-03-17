@@ -96,10 +96,10 @@ class RestApi extends HManager
         return $all;
     }
 
-    function call(){
+    function call($endpoint = null){
         $curl = curl_init();
 
-
+        $full_url = $this->buildFullUrl($endpoint);
 
         curl_setopt($curl, CURLOPT_HTTPHEADER, $this->buildHeaders());
 
@@ -113,7 +113,7 @@ class RestApi extends HManager
         curl_setopt($curl, CURLOPT_POST, $this->send_mode);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $this->data);
 
-        curl_setopt($curl, CURLOPT_URL, $this->url);
+        curl_setopt($curl, CURLOPT_URL, $full_url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
         if($this->security_enabled){
@@ -162,5 +162,39 @@ class RestApi extends HManager
      */
     public function getLastHttpCode(){
         return $this->last_http_error_code;
+    }
+
+    private function buildFullUrl($endpoint)
+    {
+        $u = $this->url;
+
+        $params = $this->getUrlParams();
+
+        if($endpoint){
+            if(substr($u, -1) != "/"){
+                $u .= "/";
+            }
+
+            $endpoint = ltrim($endpoint, '/');
+
+            if(strpos($endpoint,"?") !== false){
+                $join = "&";
+            }else{
+                $join = "?";
+            }
+
+            $u .= $endpoint . $join . $params;
+        }
+        return $u;
+    }
+
+    private function getUrlParams()
+    {
+        $params = "";
+
+        if($this->send_mode == self::SEND_MODE_GET){
+            $params = http_build_query($this->getAllVars()) ;
+        }
+        return $params;
     }
 }
