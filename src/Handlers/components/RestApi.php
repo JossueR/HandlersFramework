@@ -26,19 +26,20 @@ class RestApi extends HManager
     function __construct($url) {
         $this->url = $url;
 
-        $headers = array('Accept', ' */*');
 
         $this->mode = self::MODE_JSON;
         $this->verbose = false;
         $this->security_enabled = false;
         $this->send_mode = self::SEND_MODE_GET;
+        $this->headers = array('Accept', ' */*');
     }
 
-    /**
-     * @param mixed $cert_path
+    /**Ruta y nombre del archivo de certificado
+     * @param string $cert_path
      */
     public function setCertPath($cert_path)
     {
+        $this->security_enabled = true;
         $this->cert_path = $cert_path;
     }
 
@@ -52,21 +53,34 @@ class RestApi extends HManager
         $this->security_enabled = true;
     }
 
+    /**
+     * @param string $mode SEND_MODE_GET | SEND_MODE_POST
+     */
     function setSendMode($mode){
         $this->send_mode = $mode;
     }
 
+    /** guarda un header
+     * @param string $name
+     * @param string $val
+     */
     function addHeader($name, $val){
         $this->headers[$name] = $val;
     }
 
-    function addMultipleHeaders($headers_array){
+    /** Guarda un array asociativo con los heades y sus valores
+     * @param array $headers_array
+     */
+    function addMultipleHeaders(array $headers_array){
 
         if(is_array($headers_array)){
             $this->headers = array_merge($this->headers, $headers_array);
         }
     }
 
+    /**
+     * Establece que se enviaran datos en formato json
+     */
     function setSendModeJSON(){
         $this->mode = self::MODE_JSON;
         $this->addHeader("Content-Type", "application/json");
@@ -117,6 +131,8 @@ class RestApi extends HManager
         $result = curl_exec($curl);
         //fclose($verbose_file);
 
+        $this->last_http_error_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
         if($this->verbose){
             echo "POST_dATA: " . $this->data;
 
@@ -141,6 +157,9 @@ class RestApi extends HManager
         $this->data = $data;
     }
 
+    /** ultimo status http
+     * @return mixed
+     */
     public function getLastHttpCode(){
         return $this->last_http_error_code;
     }
