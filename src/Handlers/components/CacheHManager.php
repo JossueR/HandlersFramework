@@ -20,7 +20,10 @@ abstract class CacheHManager extends HManager
     protected  function __construct($session_conf_idx)
     {
         $this->session_conf_idx = $session_conf_idx;
-        $this->initSession();
+
+        if(self::sessionEnabled()) {
+            $this->initSession();
+        }
     }
 
     /**
@@ -130,6 +133,10 @@ abstract class CacheHManager extends HManager
     abstract protected function loadUnCachedVar($key);
 
     private function initSession(){
-        $_SESSION[$this->session_conf_idx] = array();
+
+        if(!isset($_SESSION[$this->session_conf_idx])){
+            $_SESSION[$this->session_conf_idx] = array();
+        }
+        
     }
 }
