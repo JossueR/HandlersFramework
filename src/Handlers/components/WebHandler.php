@@ -4,6 +4,8 @@
 namespace Handlers\components;
 
 
+use Handlers\data_access\HistoryRepo;
+
 class WebHandler extends XHandler
 {
 
@@ -144,9 +146,11 @@ class WebHandler extends XHandler
      * @param String $showText
      */
     public function registerAction($scriptKey, $showText){
-        $total =count($_SESSION["HISTORY"]);
+        $his_repo = HistoryRepo::getInstance();
+        $all_his = $his_repo->getAllVars();
+        $total =count($all_his);
         for($i=0; $i < $total; $i++){
-            if($_SESSION["HISTORY"][$i]["KEY"] == $scriptKey){
+            if($all_his[$i]["KEY"] == $scriptKey){
                 break;
             }
         }
@@ -156,7 +160,7 @@ class WebHandler extends XHandler
 
             //elimina las acciones posteriores
             for($j = $total; $j > $i; $j--){
-                unset($_SESSION["HISTORY"][$j]);
+                unset($all_his[$j]);
             }
         }
 
@@ -177,18 +181,24 @@ class WebHandler extends XHandler
             self::$handler = self::$handler[0];
              * */
 
-            $_SESSION["HISTORY"][] = $his;
+            $all_his[] = $his;
         }
+
+        $his_repo->setALLVars($all_his);
 
     }
 
     public function clearSteps(){
-        $_SESSION["HISTORY"] = array();
+
+        HistoryRepo::getInstance()->clearAllVars();
     }
 
     function historyBack($auto=false, $indexStep=1){
+        $his_repo = HistoryRepo::getInstance();
+        $all_his = $his_repo->getAllVars();
+
         $indexStep = intval($indexStep);
-        $total = count($_SESSION["HISTORY"]);
+        $total = count($all_his);
 
         if($indexStep < $total){
             //eliminamos 1 para movernos por los indices del arreglo
@@ -199,17 +209,10 @@ class WebHandler extends XHandler
                 $indexStep = $total;
             }
 
-            $action = $_SESSION["HISTORY"][$total - $indexStep]["ACTION"] . "?" . $_SESSION["HISTORY"][$total - $indexStep]["GET"];
-            $post = $_SESSION["HISTORY"][$total - $indexStep]["POST"];
+            $action = $all_his[$total - $indexStep]["ACTION"] . "?" . $all_his[$total - $indexStep]["GET"];
+            $post = $all_his[$total - $indexStep]["POST"];
 
-            if($auto){
-                $script = "<script>";
-                $script_end = "</script>";
-            }else{
-                $script = "";
-                $script_end = "";
-            }
-            return $script . "dom_update('$action','$post','".ConfigParams::$APP_CONTENT_MAIN."')" . $script_end;
+            return self::asyncLoad($action,$post,ConfigParams::$APP_CONTENT_MAIN,!$auto);
         }else{
             return false;
         }

@@ -20,6 +20,7 @@ abstract class CacheHManager extends HManager
     protected  function __construct($session_conf_idx)
     {
         $this->session_conf_idx = $session_conf_idx;
+        $this->initSession();
     }
 
     /**
@@ -96,6 +97,7 @@ abstract class CacheHManager extends HManager
     {
         if(self::sessionEnabled()){
             unset($_SESSION[$this->session_conf_idx]);
+            $this->initSession();
         }else{
             parent::clearAllVars();
         }
@@ -111,6 +113,15 @@ abstract class CacheHManager extends HManager
         }
     }
 
+    public function setALLVars($all)
+    {
+        if(self::sessionEnabled()){
+            $_SESSION[$this->session_conf_idx] = $all;
+        }else{
+            parent::setALLVars($all);
+        }
+    }
+
 
     /**
      * @param string $key
@@ -118,5 +129,7 @@ abstract class CacheHManager extends HManager
      */
     abstract protected function loadUnCachedVar($key);
 
-
+    private function initSession(){
+        $_SESSION[$this->session_conf_idx] = array();
+    }
 }
