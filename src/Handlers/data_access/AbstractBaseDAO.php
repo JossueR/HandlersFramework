@@ -24,6 +24,10 @@ abstract class AbstractBaseDAO extends SimpleDAO
     protected $historyMap = false;
     private $lastSelectQuery;
     private $execFind;
+    /**
+     * @var QueryDynamicParams $queryParams
+     */
+    private $queryParams;
 
     private $fields_info;
 
@@ -58,6 +62,16 @@ abstract class AbstractBaseDAO extends SimpleDAO
     function &getSumary(){
         return $this->sumary;
     }
+
+    /**
+     * @param QueryDynamicParams $queryParams
+     */
+    public function setQueryParams($queryParams)
+    {
+        $this->queryParams = $queryParams;
+    }
+
+
 
     /**
      * @param $searchArray
@@ -242,13 +256,17 @@ abstract class AbstractBaseDAO extends SimpleDAO
     /**
      * @return QueryDynamicParams
      */
-    //TODO falta implementar
     public function getQueryParams(){
-        $params = null;
-        if($this->autoconfigurable){
-            $params = new QueryDynamicParams();
+        if($this->queryParams != null){
+            $this->autoconfigurable = true;
+        }else{
+            if($this->autoconfigurable){
+                $this->queryParams = new QueryDynamicParams();
+            }
         }
-        return $params;
+
+
+        return $this->queryParams;
     }
 
     public function find($sql){
