@@ -71,7 +71,11 @@ class QueryDynamicParams
 
 
     public function addOrderField($field, $asc=true){
-        $this->order_fields[$field] = $asc;
+
+        if($field && $field != ''){
+            $this->order_fields[$field] = $asc;
+        }
+        
     }
 
     public function removeOrder(){
