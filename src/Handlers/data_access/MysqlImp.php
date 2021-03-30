@@ -395,6 +395,11 @@ class MysqlImp extends BDEngine
                 if (is_array($fields) && count($fields) > 0) {
                     $all_orders = array();
                     foreach ($fields as $order_name => $order_type) {
+                        if($order_type){
+                            $order_type = "ASC";
+                        }else{
+                            $order_type = "DESC";
+                        }
 
                         //if (self::validFieldExist($order_name, $sql)) {
                             $order_name = "`$order_name`";
