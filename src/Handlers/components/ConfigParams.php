@@ -32,6 +32,7 @@ class ConfigParams
     public static $QUERY_PARAM_FILTER_KEYS;
     public static $QUERY_PARAM_ORDER_FIELD;
     public static $QUERY_PARAM_ORDER_TYPE;
+    public static $QUERY_PARAM_ORDER_TYPE_VALUE_ASC;
     public static $QUERY_PARAM_PAGE;
     public static $QUERY_PARAM_CANT_BY_PAGE;
 
@@ -57,6 +58,10 @@ class ConfigParams
 
             if(isset($json_conf["QUERY_PARAM_ORDER_TYPE"]) && $json_conf["QUERY_PARAM_ORDER_TYPE"] != ""){
                 self::$QUERY_PARAM_ORDER_TYPE = $json_conf["QUERY_PARAM_ORDER_TYPE"];
+            }
+
+            if(isset($json_conf["QUERY_PARAM_ORDER_TYPE_VALUE_ASC"]) && $json_conf["QUERY_PARAM_ORDER_TYPE_VALUE_ASC"] != ""){
+                self::$QUERY_PARAM_ORDER_TYPE_VALUE_ASC = $json_conf["QUERY_PARAM_ORDER_TYPE_VALUE_ASC"];
             }
 
             if(isset($json_conf["QUERY_PARAM_PAGE"]) && $json_conf["QUERY_PARAM_PAGE"] != ""){

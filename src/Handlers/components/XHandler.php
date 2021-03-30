@@ -412,6 +412,12 @@ class XHandler extends HManager
 
         $order_field = self::getRequestAttr(ConfigParams::$QUERY_PARAM_ORDER_FIELD);
         $order_asc = self::getRequestAttr(ConfigParams::$QUERY_PARAM_ORDER_TYPE);
+
+        if(ConfigParams::$QUERY_PARAM_ORDER_TYPE_VALUE_ASC == $order_asc){
+            $order_asc = true;
+        }else{
+            $order_asc = false;
+        }
         $params->addOrderField($order_field,$order_asc);
 
         $page = self::getRequestAttr(ConfigParams::$QUERY_PARAM_PAGE);
