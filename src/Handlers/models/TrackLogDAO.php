@@ -47,7 +47,7 @@ class TrackLogDAO extends AbstractBaseDAO
         return $sql;
     }
 
-    function &insert($searchArray){
+    function &insert($searchArray, $putQuotesAndNull=true){
         $defaul["create_date"] = self::$SQL_TAG."now()";
         $defaul["date"] = self::$SQL_TAG."now()";
 
@@ -56,15 +56,15 @@ class TrackLogDAO extends AbstractBaseDAO
         $searchArray = array_merge($searchArray, $defaul);
 
 
-        return parent::insert($searchArray);
+        return parent::insert($searchArray, $putQuotesAndNull);
 
     }
 
-    function &update($searchArray, $condicion){
+    function &update($searchArray, $condicion, $putQuotesAndNull=true){
         $defaul["update_date"] = self::$SQL_TAG."now()";
         $defaul = parent::putQuoteAndNull($defaul);
 
         $searchArray = array_merge($searchArray, $defaul);
-        return parent::update($searchArray, $condicion);
+        return parent::update($searchArray, $condicion, $putQuotesAndNull);
     }
 }
