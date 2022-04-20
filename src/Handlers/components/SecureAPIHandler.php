@@ -88,7 +88,11 @@ class SecureAPIHandler extends APIHandler
     }
 
     private function  setUsername(){
-        LoggedUserRepo::getInstance()->loadUserInfo($this->connection_data["user_id"]);
+        LoggedUserRepo::getInstance()->setUserInfo(
+            $this->connection_data["user"],
+            $this->connection_data["user"],
+            $this->connection_data["user"]
+        );
     }
 
     private function updateLast(){
