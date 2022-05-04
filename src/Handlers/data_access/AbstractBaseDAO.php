@@ -228,7 +228,7 @@ abstract class AbstractBaseDAO extends SimpleDAO
 
             default:
 
-                $update = ($this->exist($searchArray))? parent::EDIT : parent::INSERT;
+                $update = ($this->exist($searchArray, false))? parent::EDIT : parent::INSERT;
         }
 
         if($update === parent::INSERT ){
