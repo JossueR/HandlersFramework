@@ -108,7 +108,7 @@ class MysqlImp extends BDEngine
     function getNext(QueryInfo $sumary)
     {
 
-        if(!isset($sumary->total) || $sumary->total == 0){
+        if(!$sumary->result || !isset($sumary->total) || $sumary->total == 0){
             return null;
         }else if($sumary->inArray){
 
