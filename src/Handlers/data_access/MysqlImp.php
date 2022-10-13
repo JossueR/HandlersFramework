@@ -47,6 +47,9 @@ class MysqlImp extends BDEngine
 
         }
 
+        //almacena log si esta habilitado
+        $this->storeDebugLog($connection, $sql);
+
         $sumary->result = @mysqli_query($connection->connection, $sql );
 
 
@@ -63,8 +66,7 @@ class MysqlImp extends BDEngine
 
         $sumary->error = mysqli_error($connection->connection);
 
-        //almacena log si esta habilitado
-        $this->storeDebugLog($connection, $sql);
+
 
         //almacena en el query info el ultimo sql
         $sumary->sql = $sql;
