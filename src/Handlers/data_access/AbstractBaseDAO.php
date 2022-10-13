@@ -80,7 +80,7 @@ abstract class AbstractBaseDAO extends SimpleDAO
      */
     function &insert($searchArray, $putQuotesAndNull=true){
         if($putQuotesAndNull){
-            $searchArray = parent::putQuoteAndNull($searchArray, !self::REMOVE_TAG);
+            $searchArray = parent::putQuoteAndNull($searchArray);
         }
 
         $this->sumary = parent::_insert($this->table, $searchArray,$this->conectionName);
@@ -100,8 +100,8 @@ abstract class AbstractBaseDAO extends SimpleDAO
      */
     function &update($searchArray, $condition, $putQuotesAndNull=true){
         if($putQuotesAndNull){
-            $condition = parent::putQuoteAndNull($condition, !self::REMOVE_TAG);
-            $searchArray = parent::putQuoteAndNull($searchArray, !self::REMOVE_TAG);
+            $condition = parent::putQuoteAndNull($condition);
+            $searchArray = parent::putQuoteAndNull($searchArray);
         }
 
         $this->sumary = parent::_update($this->table, $searchArray, $condition,$this->conectionName);
@@ -120,7 +120,7 @@ abstract class AbstractBaseDAO extends SimpleDAO
         $condition = parent::mapToBd($prototype, $this->getDBMap());
 
         if($putQuotesAndNull){
-            $condition = parent::putQuoteAndNull($condition, !self::REMOVE_TAG);
+            $condition = parent::putQuoteAndNull($condition);
         }
 
 
