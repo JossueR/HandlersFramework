@@ -47,19 +47,27 @@ class MysqlImp extends BDEngine
 
         }
 
+        //almacena en el query info el ultimo sql
+        $sumary->sql = $sql;
         //almacena log si esta habilitado
         $this->storeDebugLog($connection, $sql);
 
-        $sumary->result = @mysqli_query($connection->connection, $sql );
+        try{
+            $sumary->result = @mysqli_query($connection->connection, $sql );
+            if($isSelect){
 
+                $sumary->total  = ($sumary->result)? intval(mysqli_num_rows($sumary->result)) : 0;
+            }else{
+                $sumary->total = mysqli_affected_rows($connection->connection);
+                $sumary->new_id = mysqli_insert_id($connection->connection);
+            }
+        }catch (\Exception $e){
 
-        if($isSelect){
-
-            $sumary->total  = ($sumary->result)? intval(mysqli_num_rows($sumary->result)) : 0;
-        }else{
-            $sumary->total = mysqli_affected_rows($connection->connection);
-            $sumary->new_id = mysqli_insert_id($connection->connection);
         }
+
+
+
+
 
 
         $sumary->errorNo = mysqli_errno($connection->connection);
@@ -68,8 +76,7 @@ class MysqlImp extends BDEngine
 
 
 
-        //almacena en el query info el ultimo sql
-        $sumary->sql = $sql;
+
 
         // si hay paginacion
         if($queryparams){
