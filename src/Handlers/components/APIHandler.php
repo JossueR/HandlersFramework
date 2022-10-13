@@ -32,9 +32,7 @@ class APIHandler extends XHandler
         $this->configErrorHandler();
 
         //si no hay id de log, osea si es el primer llamado
-        if(!self::$log_id){
-            $this->storelog();
-        }
+        $this->storelog();
     }
 
     function toJSON($send = true, $headers = true){
@@ -157,7 +155,7 @@ class APIHandler extends XHandler
             );
 
             //agrega id si es una edicion
-            if(self::$log_id){
+            if($resp){
                 $log_record["id"] = self::$log_id;
             }
 
@@ -165,7 +163,7 @@ class APIHandler extends XHandler
             if($log->save($log_record)){
 
                 //si hay un id nuevo
-                if($log->getNewID()){
+                if($resp){
 
                     //almacena
                     self::$log_id = $log->getNewID();
