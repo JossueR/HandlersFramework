@@ -81,32 +81,7 @@ class HManager
         if(is_array($errors) && count($errors)>0){
             foreach ($errors as $key => $value) {
 
-                if(!isset($col[$key])){
-                    $col[$key] = $key;
-                }
-
-                switch ($value) {
-                    case 'required':
-                        $msg = self::showMessage("field_required", array("field"=> $col[$key]));
-                        break;
-
-                    case 'too_long':
-                        $msg = self::showMessage("field_too_long", array("field"=> $col[$key]));
-                        break;
-
-                    case 'no_int':
-                        $msg = self::showMessage("field_no_int", array("field"=> $col[$key]));
-                        break;
-
-                    case 'no_decimal':
-                        $msg = self::showMessage("field_no_decimal", array("field"=> $col[$key]));
-                        break;
-
-                    default:
-                        $msg = $value;
-                }
-
-                $this->addError($msg);
+                $this->addError("$key, $value");
 
             }
         }
