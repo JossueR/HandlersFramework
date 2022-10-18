@@ -199,6 +199,16 @@ class SimpleDAO
         return $data;
     }
 
+    /**
+     * @param $data
+     * @return string
+     */
+    static public function escape($value, $connectionName = null){
+        $connectionName = self::getConnectionName($connectionName);
+        $use_engine = self::$engines[$connectionName];
+        return $use_engine->escape(self::$conections[$connectionName], $value);
+    }
+
 
 
 
