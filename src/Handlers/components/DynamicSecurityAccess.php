@@ -6,6 +6,7 @@ namespace Handlers\components;
 
 
 
+use Handlers\models\ConfigVarDAO;
 use Handlers\models\SecAccessDAO;
 
 class DynamicSecurityAccess
