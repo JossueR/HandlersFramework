@@ -35,6 +35,7 @@ class ConfigParams
     public static $QUERY_PARAM_ORDER_TYPE_VALUE_ASC;
     public static $QUERY_PARAM_PAGE;
     public static $QUERY_PARAM_CANT_BY_PAGE;
+    public static $APP_CONTENT_BODY;
 
     public static function loadConfigJson($path_to_json_file){
         $raw_file = file_get_contents($path_to_json_file);
@@ -74,6 +75,7 @@ class ConfigParams
 
             if(isset($json_conf["APP_CONTENT_MAIN"]) && $json_conf["APP_CONTENT_MAIN"] != ""){
                 self::$APP_CONTENT_MAIN = $json_conf["APP_CONTENT_MAIN"];
+                self::$APP_CONTENT_BODY = $json_conf["APP_CONTENT_MAIN"];
             }
 
             if(isset($json_conf["APP_DEFAULT_LIMIT_PER_PAGE"]) && $json_conf["APP_DEFAULT_LIMIT_PER_PAGE"] != ""){
