@@ -369,13 +369,15 @@ abstract class AbstractBaseDAO extends SimpleDAO
         $map = $this->getDBMap();
         $row_data = $this->get();
 
-        foreach ($prototype as $proto_key => $value) {
-            if(isset($map[$proto_key])){
-                $prototype[$proto_key] = $row_data[$map[$proto_key]];
-            }else if(isset($row_data[$proto_key])){
-                $prototype[$proto_key] = $row_data[$proto_key];
-            }
+        if($row_data) {
+            foreach ($prototype as $proto_key => $value) {
+                if (isset($map[$proto_key])) {
+                    $prototype[$proto_key] = $row_data[$map[$proto_key]];
+                } else if (isset($row_data[$proto_key])) {
+                    $prototype[$proto_key] = $row_data[$proto_key];
+                }
 
+            }
         }
 
         return $prototype;
