@@ -6,9 +6,14 @@ namespace Handlers\components;
 
 
 
+use Handlers\data_access\ConfigVarRepo;
+use Handlers\data_access\SimpleDAO;
 use Handlers\models\ConfigVarDAO;
 use Handlers\models\SecAccessDAO;
 
+/**
+ * @deprecated
+ */
 class DynamicSecurityAccess
 {
     const RULES = "RULES";
@@ -51,32 +56,32 @@ class DynamicSecurityAccess
         return $check;
     }
 
-    public static function getPermissionCheck(){
-        return $_SESSION["CONF"][ConfigVarDAO::VAR_PERMISSION_CHECK];
+    public static function getPermissionCheck(): bool
+    {
+        return ConfigVarRepo::getInstance()->getBooleanVar(ConfigVarDAO::VAR_PERMISSION_CHECK, SimpleDAO::REG_ACTIVO_Y);
     }
 
-    public static function getEnableRecordSecurity(){
-        $r = false;
-        if(isset($_SESSION["CONF"][ConfigVarDAO::VAR_ENABLE_RECORD_SECURITY])){
-            $r = $_SESSION["CONF"][ConfigVarDAO::VAR_ENABLE_RECORD_SECURITY];
-        }
-        return $r;
+    public static function getEnableRecordSecurity(): bool
+    {
+
+        return ConfigVarRepo::getInstance()->getBooleanVar(ConfigVarDAO::VAR_ENABLE_RECORD_SECURITY, SimpleDAO::REG_ACTIVO_Y);
     }
 
-    public static function getEnableHandlerActionSecurity(){
-        $r = false;
-        if(isset($_SESSION["CONF"][ConfigVarDAO::VAR_ENABLE_HANDLER_ACTION_SECURITY])){
-            $r = $_SESSION["CONF"][ConfigVarDAO::VAR_ENABLE_HANDLER_ACTION_SECURITY];
-        }
-        return $r;
+    public static function getEnableHandlerActionSecurity(): bool
+    {
+
+        return ConfigVarRepo::getInstance()->getBooleanVar(ConfigVarDAO::VAR_ENABLE_HANDLER_ACTION_SECURITY, SimpleDAO::REG_ACTIVO_Y);
     }
 
-    public static function getEnableDashSecurity(){
-        return $_SESSION["CONF"][ConfigVarDAO::VAR_ENABLE_DASH_SECURITY];
+    public static function getEnableDashSecurity(): bool
+    {
+        return ConfigVarRepo::getInstance()->getBooleanVar(ConfigVarDAO::VAR_ENABLE_DASH_SECURITY, SimpleDAO::REG_ACTIVO_Y);
+
     }
 
-    public static function getEnableDashButtonSecurity(){
-        return $_SESSION["CONF"][ConfigVarDAO::VAR_ENABLE_DASH_BUTTON_SECURITY];
+    public static function getEnableDashButtonSecurity(): bool
+    {
+        return ConfigVarRepo::getInstance()->getBooleanVar(ConfigVarDAO::VAR_ENABLE_DASH_BUTTON_SECURITY, SimpleDAO::REG_ACTIVO_Y);
     }
 
 

@@ -32,7 +32,8 @@ class PermissionRepo extends CacheHManager
     /**
      * @return PermissionRepo
      */
-    public static function getInstance(){
+    public static function getInstance(): PermissionRepo
+    {
         if(self::$instance == null){
             self::$instance = new PermissionRepo();
         }
@@ -43,13 +44,11 @@ class PermissionRepo extends CacheHManager
     /**
      * @param string $user_id
      */
-    public function setUserId($user_id)
+    public function setUserId( $user_id): PermissionRepo
     {
         $this->user_id = $user_id;
 
-        if($user_id != $this->user_id){
-            $this->clearAllVars();
-        }
+        $this->clearAllVars();
 
 
         return self::$instance;
@@ -57,7 +56,8 @@ class PermissionRepo extends CacheHManager
 
 
 
-    public function havePermission($permission){
+    public function havePermission($permission): bool
+    {
         $permissionCheck = ConfigVarRepo::getInstance()->getBooleanVar("PERMISSION_CHECK");
 
 

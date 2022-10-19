@@ -24,7 +24,8 @@ class LoggedUserRepo extends \Handlers\components\CacheHManager
         parent::__construct("USER_INFO");
     }
 
-    public function setUserInfo($user_id,$username,$full_name){
+    public function setUserInfo($user_id,$username,$full_name): LoggedUserRepo
+    {
 
         $this->setVar(self::IDX_USERNAME, $username);
         $this->setVar(self::IDX_FULL_NAME, $full_name);
@@ -51,7 +52,8 @@ class LoggedUserRepo extends \Handlers\components\CacheHManager
         return $this->getVar(self::IDX_FULL_NAME);
     }
 
-    public function isLogged(){
+    public function isLogged(): bool
+    {
         return $this->isVarLoaded(self::IDX_USER_ID);
     }
 
@@ -59,7 +61,8 @@ class LoggedUserRepo extends \Handlers\components\CacheHManager
     /**
      * @return LoggedUserRepo
      */
-    public static function getInstance(){
+    public static function getInstance(): LoggedUserRepo
+    {
         if(self::$instance == null){
             self::$instance = new LoggedUserRepo();
         }

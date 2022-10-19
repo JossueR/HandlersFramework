@@ -62,7 +62,8 @@ class DynamicSecurityAccessRepo extends \Handlers\components\CacheHManager
         return $r["permission"];
     }
 
-    public function checkHandlerActionAccess(XHandler $handler){
+    public function checkHandlerActionAccess(XHandler $handler): bool
+    {
         $status = true;
 
         $class_name_invoker = get_class($handler);
@@ -105,11 +106,13 @@ class DynamicSecurityAccessRepo extends \Handlers\components\CacheHManager
         }
     }
 
-    public function isEnableHandlerActionSecurity(){
+    public function isEnableHandlerActionSecurity(): bool
+    {
         return ConfigVarRepo::getInstance()->getBooleanVar("ENABLE_HANDLER_ACTION_SECURITY");
     }
 
-    function isEnableRecordSecurity(){
+    function isEnableRecordSecurity(): bool
+    {
         return ConfigVarRepo::getInstance()->getBooleanVar("ENABLE_RECORD_SECURITY");
     }
 }
