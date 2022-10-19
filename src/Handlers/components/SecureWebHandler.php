@@ -8,6 +8,7 @@ use Exception;
 use Handlers\data_access\ConfigVarRepo;
 use Handlers\data_access\DynamicSecurityAccessRepo;
 use Handlers\data_access\LoggedUserRepo;
+use Handlers\data_access\PermissionRepo;
 
 class SecureWebHandler extends WebHandler
 {
@@ -31,6 +32,7 @@ class SecureWebHandler extends WebHandler
         }else{
             //TODO si esta logeado, valida si requere permiso
             ConfigVarRepo::getInstance()->clearAllVars();
+            PermissionRepo::getInstance()->setUserId( LoggedUserRepo::getInstance()->getUserId());
            if(! DynamicSecurityAccessRepo::getInstance()->checkHandlerActionAccess($this) ){
                throw new Exception('requiere permiso:' . DynamicSecurityAccessRepo::getInstance()->getLastFailedPermission());
            }
